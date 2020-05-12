@@ -1,0 +1,107 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,intial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+  <style>
+    thead {
+      background: linear-gradient(to right, #606c88, #3f4c6b);
+      border-top-right-radius: 10px !important;
+      border-top-left-radius: 10px !important;
+
+    }
+
+    .btn-info {
+      background: #E53935 !important;
+      border: 1px solid #D32F2F;
+    }
+
+    .btn-info:hover {
+      border: 1px solid #D32F2F;
+      box-shadow: 2px 2px 5px #B71C1C !important;
+    }
+  </style>
+
+</head>
+
+<body ng-app="myApp">
+  <div class="container mt-4" ng-controller="myCtrl">
+
+    <div class="row">
+      <div class="col-xm-12 col-sm-12 col-md-4 col-4">
+        <div class="form mt-4">
+          <input type="text" placeholder="Patient ID" class="form-control shadow-sm" ng-model="barcode_text">
+
+          <br>
+
+          <button class="btn btn-info btn-info" ng-click="send_data()"><i class="fas fa-save"></i> Generate</button>
+        </div>
+      </div>
+
+      <div class="col-xm-12 col-sm-12 col-md-5 col-5 ml-2">
+
+        <table class="table  p-4 m-2 shadow-sm border">
+          <thead class=" text-white shadow">
+            <tr>
+              <th>Patient ID</th>
+              <th>Patient barcode</th>
+            </tr>
+
+          </thead>
+          <tbody ng-init="load_data()">
+            <tr ng-repeat="x in barcode_data">
+
+              <td>{{x.bar_code_name}}</td>
+              <td><img alt={{x.bar_code_name}} src="{{x.bar_code_info}}" /></td>
+            </tr>
+
+
+          </tbody>
+
+
+        </table>
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script>
+    var app = angular.module("myApp", []);
+    app.controller('myCtrl', function($scope, $http) {
+
+      $scope.send_data = function() {
+
+        $http.post(
+          "generate_barcode.php", {
+            'p_id': $scope.barcode_text,
+          }
+
+        ).success(function(data) {
+
+          alert(data);
+          $scope.barcode_text = null;
+          $scope.load_data();
+        });
+
+
+      }
+      $scope.load_data = function() {
+        $http.get('load_barcode.php').
+        success(function(data) {
+          $scope.barcode_data = data;
+        });
+
+
+      }
+
+
+    });
+  </script>
+</body>
+
+</html>
